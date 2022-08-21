@@ -1,0 +1,614 @@
+{
+	"compiler": {
+		"version": "0.8.16+commit.07a7930e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "admin",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "bookingList",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "bookings",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "serviceId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "date",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "client",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_date",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_serviceId",
+						"type": "uint256"
+					}
+				],
+				"name": "createBooking",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_description",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_price",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_durability",
+						"type": "uint256"
+					}
+				],
+				"name": "createProduct",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_description",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_price",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_duration",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "_productIds",
+						"type": "uint256[]"
+					}
+				],
+				"name": "createService",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_bookingId",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteBooking",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productId",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteProduct",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_serviceId",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteService",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getBookings",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "serviceId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "date",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "client",
+								"type": "address"
+							}
+						],
+						"internalType": "struct Hairdressing.Booking[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getProducts",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "price",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "durability",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Hairdressing.Product[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getServices",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "price",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "duration",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "productIds",
+								"type": "uint256[]"
+							}
+						],
+						"internalType": "struct Hairdressing.Service[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_client",
+						"type": "address"
+					}
+				],
+				"name": "getUserBookings",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "serviceId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "date",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "client",
+								"type": "address"
+							}
+						],
+						"internalType": "struct Hairdressing.Booking[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "productList",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "products",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "price",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "durability",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "serviceList",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "services",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "price",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "duration",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"author": "Pablo Urriza",
+			"kind": "dev",
+			"methods": {
+				"createBooking(uint256,uint256)": {
+					"params": {
+						"_date": "— date of the service.",
+						"_serviceId": "— service id from the service to be booked."
+					}
+				},
+				"createProduct(string,string,uint256,uint256)": {
+					"params": {
+						"_description": "— service description.",
+						"_durability": "— the durability in uses.",
+						"_name": "— name of the product.",
+						"_price": "— price of the product."
+					}
+				},
+				"createService(string,string,uint256,uint256,uint256[])": {
+					"params": {
+						"_description": "— service description.",
+						"_duration": "— the duration, in seconds, for which the auction will accept offers.",
+						"_name": "— name of the service.",
+						"_price": "— price of the service.",
+						"_productIds": "— array of the products needed for the service."
+					}
+				},
+				"deleteBooking(uint256)": {
+					"params": {
+						"_bookingId": "— product id from the product to be deleted."
+					}
+				},
+				"deleteProduct(uint256)": {
+					"params": {
+						"_productId": "— product id from the product to be deleted."
+					}
+				},
+				"deleteService(uint256)": {
+					"params": {
+						"_serviceId": "— service id from the service to be deleted."
+					}
+				},
+				"getUserBookings(address)": {
+					"params": {
+						"_client": "- Client address"
+					}
+				}
+			},
+			"title": "Hairdressing",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"admin()": {
+					"notice": "=============== Variables ==============="
+				},
+				"bookingList(uint256)": {
+					"notice": "List to keep track of the Bookings in order to be able to loop through the mapping"
+				},
+				"bookings(uint256)": {
+					"notice": "List of all Bookings"
+				},
+				"constructor": {
+					"notice": "=========== Constructor ==========="
+				},
+				"createBooking(uint256,uint256)": {
+					"notice": "Creates a new booking."
+				},
+				"createProduct(string,string,uint256,uint256)": {
+					"notice": "ProductsCreates a new product."
+				},
+				"createService(string,string,uint256,uint256,uint256[])": {
+					"notice": "Creates a new service."
+				},
+				"deleteBooking(uint256)": {
+					"notice": "Deletes an existing booking."
+				},
+				"deleteProduct(uint256)": {
+					"notice": "Deletes an existing product."
+				},
+				"deleteService(uint256)": {
+					"notice": "Deletes an existing service."
+				},
+				"getBookings()": {
+					"notice": "- List of all the bookings"
+				},
+				"getProducts()": {
+					"notice": "- List of all the products"
+				},
+				"getServices()": {
+					"notice": "- List of all the services"
+				},
+				"getUserBookings(address)": {
+					"notice": "- List of bookings for a client"
+				},
+				"productList(uint256)": {
+					"notice": "List to keep track of the Products in order to be able to loop through the mapping"
+				},
+				"products(uint256)": {
+					"notice": "List of all Products"
+				},
+				"serviceList(uint256)": {
+					"notice": "List to keep track of the Services in order to be able to loop through the mapping "
+				},
+				"services(uint256)": {
+					"notice": "List of all services"
+				}
+			},
+			"notice": "Smart contract for the management of a hairdresser.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Hairdressing.sol": "Hairdressing"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Hairdressing.sol": {
+			"keccak256": "0x92dc3450aabe02fccf73e7e26e3445149648aa1532c931609190c51d27aee54c",
+			"license": "UNLICENSED",
+			"urls": [
+				"bzz-raw://8ab0cac335534dcd7ce8c3c5a0e877b5f8c4030c1d9cff37529f887b35954a6d",
+				"dweb:/ipfs/QmQeDWK71Sd6Yi973uQHTu4NxTADB7KpCzK2Tq7AdqrxhX"
+			]
+		}
+	},
+	"version": 1
+}
