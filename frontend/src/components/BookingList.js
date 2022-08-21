@@ -7,13 +7,13 @@ import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { showError } from "../utils/common"
 
-const ProductList = ({ blockchain }) => {
-  // State to store products
-  const [products, setProducts] = useState([]);
+const BookingList = ({ blockchain }) => {
+  // State to store bookings
+  const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
     (async () => {
-      blockchain.hairdressing && setProducts(await blockchain.hairdressing.getProducts());
+      blockchain.hairdressing && setBookings(await blockchain.hairdressing.getBookings());
     })();
   }, [blockchain]); 
 
@@ -21,21 +21,20 @@ const ProductList = ({ blockchain }) => {
     <Container>
       <Row className="my-5">
         <Col md={12}>
-          <h3>All Products</h3>
+          <h3>All Bookings</h3>
         </Col>
-        {products.map((product) => (
-          <Col md={12} className="mb-3" key={product.id}>
+        {bookings.map((booking) => (
+          <Col md={12} className="mb-3" key={booking.id}>
             <Card>
               <Card.Body>
-                <Card.Title>{product.name}</Card.Title>
-                <Card.Text>{product.description}</Card.Text>
-                <Card.Text>{product.price}</Card.Text>
-                <Card.Text>{product.durability}</Card.Text>
+                <Card.Title>{booking.serviceId}</Card.Title>
+                <Card.Text>{booking.date}</Card.Text>
+                <Card.Text>{booking.client}</Card.Text>
                 <Link 
-                  to={`/product/${product.id}`}
+                  to={`/booking/${booking.id}`}
                   state={{
-                    product: {
-                      ...product,
+                    booking: {
+                      ...booking,
                     },
                   }}
                 >
@@ -50,4 +49,4 @@ const ProductList = ({ blockchain }) => {
   );
 };
 
-export default ProductList;
+export default BookingList;

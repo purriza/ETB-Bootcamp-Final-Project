@@ -7,13 +7,13 @@ import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { showError } from "../utils/common"
 
-const ProductList = ({ blockchain }) => {
-  // State to store products
-  const [products, setProducts] = useState([]);
+const ServiceList = ({ blockchain }) => {
+  // State to store services
+  const [services, setServices] = useState([]);
 
   useEffect(() => {
     (async () => {
-      blockchain.hairdressing && setProducts(await blockchain.hairdressing.getProducts());
+      blockchain.hairdressing && setServices(await blockchain.hairdressing.getServices());
     })();
   }, [blockchain]); 
 
@@ -21,21 +21,22 @@ const ProductList = ({ blockchain }) => {
     <Container>
       <Row className="my-5">
         <Col md={12}>
-          <h3>All Products</h3>
+          <h3>All Services</h3>
         </Col>
-        {products.map((product) => (
-          <Col md={12} className="mb-3" key={product.id}>
+        {services.map((service) => (
+          <Col md={12} className="mb-3" key={service.id}>
             <Card>
               <Card.Body>
-                <Card.Title>{product.name}</Card.Title>
-                <Card.Text>{product.description}</Card.Text>
-                <Card.Text>{product.price}</Card.Text>
-                <Card.Text>{product.durability}</Card.Text>
+                <Card.Title>{service.name}</Card.Title>
+                <Card.Text>{service.description}</Card.Text>
+                <Card.Text>{service.price}</Card.Text>
+                <Card.Text>{service.duration}</Card.Text>
+                <Card.Text>{service.productIds}</Card.Text>
                 <Link 
-                  to={`/product/${product.id}`}
+                  to={`/service/${service.id}`}
                   state={{
-                    product: {
-                      ...product,
+                    service: {
+                      ...service,
                     },
                   }}
                 >
@@ -50,4 +51,4 @@ const ProductList = ({ blockchain }) => {
   );
 };
 
-export default ProductList;
+export default ServiceList;

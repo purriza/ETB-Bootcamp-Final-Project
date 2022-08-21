@@ -5,6 +5,10 @@ import Header from "./components/Header";
 import { Route, Routes } from "react-router-dom";
 import ProductList from "./components/ProductList";
 import ProductDetail from "./components/ProductDetail";
+import ServiceList from "./components/ServiceList";
+import ServiceDetail from "./components/ServiceDetail";
+import BookingList from "./components/BookingList";
+import BookingDetail from "./components/BookingDetail";
 import UserDetail from "./components/UserDetail";
 import { getBlockchain } from "./utils/common";
 
@@ -22,9 +26,19 @@ function App() {
       <Header blockchain={blockchain} /> 
       <Routes>
         <Route path="/" element={<ProductList blockchain={blockchain} />} />
+        <Route path="/" element={<ServiceList blockchain={blockchain} />} />
+        <Route path="/" element={<BookingList blockchain={blockchain} />} />
         <Route
           path="/product/:id"
           element={<ProductDetail blockchain={blockchain} />}
+        />
+        <Route
+          path="/service/:id"
+          element={<ServiceDetail blockchain={blockchain} />}
+        />
+        <Route
+          path="/booking/:id"
+          element={<BookingDetail blockchain={blockchain} />}
         />
         <Route 
           path="/user/" 

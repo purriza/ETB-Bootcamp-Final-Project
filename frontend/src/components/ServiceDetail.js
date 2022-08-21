@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { showError } from "../utils/common";
 
-const ProductDetail = ({ blockchain }) => {
+const ServiceDetail = ({ blockchain }) => {
   // State to store offers
   const [offers, setOffers] = useState([]);
 
@@ -73,7 +73,7 @@ const ProductDetail = ({ blockchain }) => {
     <Container className="py-2">
       <Link to="/">
         <Button className="mb-2" variant="outline-primary">
-          🔙 All Auctions
+          🔙 All Products
         </Button>
       </Link>
 
@@ -158,4 +158,4 @@ const ProductDetail = ({ blockchain }) => {
   );
 };
 
-export default ProductDetail;
+export default ServiceDetail;
