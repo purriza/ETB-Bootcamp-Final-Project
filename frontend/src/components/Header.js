@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Form, Modal } from "react-bootstrap";
 import { showError } from "../utils/common";
 import { Route, Routes } from "react-router-dom";
+import Select from 'react-select'
 
 function Header ({ blockchain }) { 
   const [showProductModal, setShowProductModal] = useState(false);
@@ -96,6 +97,12 @@ function Header ({ blockchain }) {
     }
     handleCloseBookingModal();
   };
+
+  const options = [
+    { value: 'chocolate', label: 'Chocolate' },
+    { value: 'strawberry', label: 'Strawberry' },
+    { value: 'vanilla', label: 'Vanilla' }
+  ]
 
   return (
     <div>
@@ -232,6 +239,13 @@ function Header ({ blockchain }) {
                 required
               />
             </Form.Group>
+            <Select
+                isMulti
+                name="colors"
+                options={options}
+                className="basic-multi-select"
+                classNamePrefix="select"
+            />
             <Button variant="primary" type="submit" className="mt-2">
               Add
             </Button>

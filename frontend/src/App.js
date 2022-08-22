@@ -23,11 +23,11 @@ function App() {
 
   return (
     <div>
-      <Header blockchain={blockchain} /> 
+      <Header blockchain={blockchain} />
+      <ProductList blockchain={blockchain} /> 
+      <ServiceList blockchain={blockchain} /> 
+      <BookingList blockchain={blockchain} /> 
       <Routes>
-        <Route path="/" element={<ProductList blockchain={blockchain} />} />
-        <Route path="/" element={<ServiceList blockchain={blockchain} />} />
-        <Route path="/" element={<BookingList blockchain={blockchain} />} />
         <Route
           path="/product/:id"
           element={<ProductDetail blockchain={blockchain} />}

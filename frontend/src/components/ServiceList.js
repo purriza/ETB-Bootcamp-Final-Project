@@ -29,8 +29,8 @@ const ServiceList = ({ blockchain }) => {
               <Card.Body>
                 <Card.Title>{service.name}</Card.Title>
                 <Card.Text>{service.description}</Card.Text>
-                <Card.Text>{service.price}</Card.Text>
-                <Card.Text>{service.duration}</Card.Text>
+                <Card.Text>{service.price.toString()}</Card.Text>
+                <Card.Text>{service.duration.toString()}</Card.Text>
                 <Card.Text>{service.productIds}</Card.Text>
                 <Link 
                   to={`/service/${service.id}`}

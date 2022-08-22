@@ -27,7 +27,7 @@ const BookingList = ({ blockchain }) => {
           <Col md={12} className="mb-3" key={booking.id}>
             <Card>
               <Card.Body>
-                <Card.Title>{booking.serviceId}</Card.Title>
+                <Card.Title>{booking.serviceId.toString()}</Card.Title>
                 <Card.Text>{booking.date}</Card.Text>
                 <Card.Text>{booking.client}</Card.Text>
                 <Link 

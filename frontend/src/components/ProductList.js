@@ -27,15 +27,15 @@ const ProductList = ({ blockchain }) => {
           <Col md={12} className="mb-3" key={product.id}>
             <Card>
               <Card.Body>
-                <Card.Title>{product.name}</Card.Title>
-                <Card.Text>{product.description}</Card.Text>
-                <Card.Text>{product.price}</Card.Text>
-                <Card.Text>{product.durability}</Card.Text>
+                <Card.Title>Name: {product.name}</Card.Title>
+                <Card.Text>Description: {product.description}</Card.Text>
+                <Card.Text>Price: {product.price.toString()}</Card.Text>
+                <Card.Text>Durability: {product.durability.toString()}</Card.Text>
                 <Link 
                   to={`/product/${product.id}`}
                   state={{
                     product: {
-                      ...product,
+                      ...product
                     },
                   }}
                 >
