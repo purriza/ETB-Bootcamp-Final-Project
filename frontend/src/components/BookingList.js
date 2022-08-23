@@ -30,7 +30,7 @@ const BookingList = ({ blockchain }) => {
                 <Card.Title>{booking.serviceId.toString()}</Card.Title>
                 <Card.Text>{booking.date}</Card.Text>
                 <Card.Text>{booking.client}</Card.Text>
-                <Link 
+                {/*<Link 
                   to={`/booking/${booking.id}`}
                   state={{
                     booking: {
@@ -39,7 +39,7 @@ const BookingList = ({ blockchain }) => {
                   }}
                 >
                   <Button variant="primary">View</Button>
-                </Link>
+                </Link>*/}
               </Card.Body>
             </Card>
           </Col>

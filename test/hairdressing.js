@@ -21,7 +21,7 @@ describe("Hairdressing Contract", () => {
     description: "Hairdressing service1",
     price: 20,
     duration: 300, // 5 minutes
-    productIds: [1, 2]
+    products: [{value: 1, label: "Product 1"}, {value: 2, label: "Product 2"}]
   };
   // Sample Booking
   const BOOKING = {
@@ -88,7 +88,7 @@ describe("Hairdressing Contract", () => {
         SERVICE.description,
         SERVICE.price,
         SERVICE.duration,
-        SERVICE.productIds
+        SERVICE.products
       );
 
       const services = await HairdressingContract.getServices();
@@ -99,8 +99,10 @@ describe("Hairdressing Contract", () => {
       expect(services[0].price).to.be.equal(SERVICE.price);
       expect(services[0].duration).to.be.equal(SERVICE.duration);
       //expect(services[0].productsId.length).to.be.equal(2);
-      expect(services[0].productsId[0]).to.be.equal(SERVICE.productIds[0]);
-      expect(services[0].productsId[1]).to.be.equal(SERVICE.productIds[1]);
+      expect(services[0].productIds[0]).to.be.equal(SERVICE.products[0].value);
+      expect(services[0].productNames[0]).to.be.equal(SERVICE.products[0].label);
+      expect(services[0].productIds[1]).to.be.equal(SERVICE.products[1].value);
+      expect(services[0].productNames[1]).to.be.equal(SERVICE.products[1].label);
     });
 
     it("Should NOT create a service if not admin", async () => {
@@ -110,7 +112,7 @@ describe("Hairdressing Contract", () => {
           SERVICE.description,
           SERVICE.price,
           SERVICE.duration,
-          SERVICE.productIds
+          SERVICE.products
         )
       ).to.be.revertedWith("Only admin");
     });
@@ -122,7 +124,7 @@ describe("Hairdressing Contract", () => {
           SERVICE.description,
           SERVICE.price,
           240, // 4 minutes 
-          SERVICE.productIds
+          SERVICE.products
         )
       ).to.be.revertedWith("Duration should be between 5 minutes and 2 hours");
     })
@@ -135,7 +137,7 @@ describe("Hairdressing Contract", () => {
         SERVICE.description,
         SERVICE.price,
         SERVICE.duration,
-        SERVICE.productIds
+        SERVICE.products
       );
     });
 
@@ -145,7 +147,7 @@ describe("Hairdressing Contract", () => {
         SERVICE.description,
         SERVICE.price,
         SERVICE.duration,
-        SERVICE.productIds
+        SERVICE.products
       );
 
       const timeStamp = (await ethers.provider.getBlock(serviceTx.blockNumber))

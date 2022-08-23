@@ -25,6 +25,7 @@ contract Hairdressing {
         uint price;
         uint duration;
         uint[] productIds;
+        string[] productNames;
     }
     /// @notice List of all services
     mapping(uint => Service) public services;
@@ -51,8 +52,9 @@ contract Hairdressing {
     /// @notice Booking struct
     struct Booking {
         uint id;
-        uint serviceId;
         uint date;
+        uint serviceId;
+        string serviceName;
         address client;
     }
     /// @notice List of all Bookings
@@ -64,6 +66,11 @@ contract Hairdressing {
 
     /// @notice Mapping of clientes and their booked services
     mapping(address => uint[]) private userBookings;
+
+    struct MultiSelectStruct {
+        uint value;
+        string label;
+    }
 
     /// =========== Constructor ===========
 
@@ -147,13 +154,20 @@ contract Hairdressing {
     /// @param _description — service description.
     /// @param _price — price of the service.
     /// @param _duration — the duration, in seconds, for which the auction will accept offers.
-    /// @param _productIds — array of the products needed for the service.
-    function createService(string calldata _name, string calldata _description, uint _price, uint _duration, uint[] calldata _productIds) external onlyAdmin() {
+    /// @param _products — array of the products needed for the service.
+    function createService(string calldata _name, string calldata _description, uint _price, uint _duration, MultiSelectStruct[] memory _products) external onlyAdmin() {
         // Duration should be between 5 minutes and 2 hours
         require(
             _duration >= 5 minutes && _duration <= 2 hours,
             "Duration should be between 5 minutes and 2 hours"
         );
+
+        uint[] memory productIds = new uint[](_products.length);
+        string[] memory productNames = new string[](_products.length);
+        for (uint i = 0; i < _products.length; i++) {
+            productIds[i] = _products[i].value;
+            productNames[i] = _products[i].label;
+        }
 
         services[nextServiceId] = Service(
             nextServiceId,
@@ -161,7 +175,8 @@ contract Hairdressing {
             _description,
             _price,
             _duration,
-            _productIds
+            productIds,
+            productNames
         );
 
         // Save the auction to user auction mapping
@@ -197,6 +212,7 @@ contract Hairdressing {
             nextBookingId,
             _date, 
             _serviceId,
+            services[_serviceId].name,
             msg.sender
         );
 
@@ -225,6 +241,9 @@ contract Hairdressing {
 
         for (uint i = 1; i < nextServiceId; i++) {
             _allServices[i - 1] = services[i];
+            /*for (uint j = 0; j < services[i].productIds.length; j++) {
+                _allServices[i - 1].productNames[j] = products[services[i].productIds[j]].name;
+            }*/
         }
 
         // TO-DO Better?
@@ -240,6 +259,18 @@ contract Hairdressing {
                 _services[serviceList[i]].productIds
             );
         }*/
+
+        return _allServices;
+    }
+
+    /// @notice - List of all the services for be displayed on a MultiSelect
+    function getServicesMultiSelect() external view returns (MultiSelectStruct[] memory) {
+        MultiSelectStruct[] memory _allServices = new MultiSelectStruct[](nextServiceId - 1);
+
+        for (uint i = 1; i < nextServiceId; i++) {
+            _allServices[i - 1].value = services[i].id;
+            _allServices[i - 1].label = services[i].name;
+        }
 
         return _allServices;
     }
@@ -264,6 +295,18 @@ contract Hairdressing {
                 _services[productList[i]].durability
             );
         }*/
+
+        return _allProducts;
+    }
+
+    /// @notice - List of all the products for be displayed on a MultiSelect
+    function getProductsMultiSelect() external view returns (MultiSelectStruct[] memory) {
+        MultiSelectStruct[] memory _allProducts = new MultiSelectStruct[](nextProductId - 1);
+
+        for (uint i = 1; i < nextProductId; i++) {
+            _allProducts[i - 1].value = products[i].id;
+            _allProducts[i - 1].label = products[i].name;
+        }
 
         return _allProducts;
     }

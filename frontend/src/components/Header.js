@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "react-bootstrap/esm/Container";
 import Navbar from "react-bootstrap/Navbar";
 import Button from "react-bootstrap/Button";
@@ -6,7 +6,13 @@ import { Link } from "react-router-dom";
 import { Form, Modal } from "react-bootstrap";
 import { showError } from "../utils/common";
 import { Route, Routes } from "react-router-dom";
+
 import Select from 'react-select'
+
+import TextField from '@mui/material/TextField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 function Header ({ blockchain }) { 
   const [showProductModal, setShowProductModal] = useState(false);
@@ -24,11 +30,20 @@ function Header ({ blockchain }) {
   const [serviceDescription, setServiceDescription] = useState("");
   const [servicePrice, setServicePrice] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [productIds, setProductIds] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [products, setProducts] = useState([]);
 
   // Booking form fields
-  const [serviceId, setServiceId] = useState("");
+  const [services, setServices] = useState([]);
+  const [selectedService, setSelectedService] = useState("");
   const [date, setDate] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      blockchain.hairdressing && setProducts(await blockchain.hairdressing.getProductsMultiSelect());
+      blockchain.hairdressing && setServices(await blockchain.hairdressing.getServicesMultiSelect());
+    })();
+  }, [blockchain]); 
 
   const addProduct = () => {
     setShowProductModal(true);
@@ -76,8 +91,8 @@ function Header ({ blockchain }) {
         serviceName,
         serviceDescription,
         servicePrice,
-        duration,
-        productIds // TO-DO
+        duration*60,
+        selectedProducts
       );
     } catch (error) {
       showError(error);
@@ -89,7 +104,7 @@ function Header ({ blockchain }) {
     e.preventDefault();
     try {
       await blockchain.hairdressing.createBooking(
-        serviceId,
+        selectedService.value,
         date // TO-DO
       );
     } catch (error) {
@@ -97,12 +112,6 @@ function Header ({ blockchain }) {
     }
     handleCloseBookingModal();
   };
-
-  const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' }
-  ]
 
   return (
     <div>
@@ -168,8 +177,6 @@ function Header ({ blockchain }) {
                 type="number"
                 placeholder="Enter durability"
                 value={durability}
-                //min="86400"
-                //max="864000"
                 onChange={(e) => setDurability(e.target.value)}
                 required
               />
@@ -218,34 +225,27 @@ function Header ({ blockchain }) {
               />
             </Form.Group>
             <Form.Group className="mb-2" controlId="duration">
-              <Form.Label>Duration</Form.Label>
+              <Form.Label>Duration (in minutes)</Form.Label>
               <Form.Control
                 type="number"
                 placeholder="Enter duration"
                 value={duration}
-                //min="86400"
-                //max="864000"
                 onChange={(e) => setDuration(e.target.value)}
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-2" controlId="productIds">
+            <Form.Group className="mb-2" controlId="products">
               <Form.Label>Products</Form.Label>
-              <Form.Control
-                type="number"
+              <Select
+                isMulti
+                name="products"
+                options={products}
+                className="basic-multi-select"
                 placeholder="Enter products"
-                value={productIds}
-                onChange={(e) => setProductIds(e.target.value)}
+                onChange={setSelectedProducts}
                 required
               />
             </Form.Group>
-            <Select
-                isMulti
-                name="colors"
-                options={options}
-                className="basic-multi-select"
-                classNamePrefix="select"
-            />
             <Button variant="primary" type="submit" className="mt-2">
               Add
             </Button>
@@ -261,11 +261,12 @@ function Header ({ blockchain }) {
           <form onSubmit={(e) => onSubmitProduct(e)}>
             <Form.Group className="mb-2" controlId="service">
               <Form.Label>Service</Form.Label>
-              <Form.Control
-                type="text"
+              <Select
+                name="services"
+                options={services}
+                className="basic-select"
                 placeholder="Enter service"
-                value={serviceId}
-                onChange={(e) => setServiceId(e.target.value)}
+                onChange={setSelectedService}
                 required
               />
             </Form.Group>
@@ -279,6 +280,16 @@ function Header ({ blockchain }) {
                 required
               />
             </Form.Group>
+            {/*<LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DateTimePicker
+                renderInput={(props) => <TextField {...props} />}
+                label="DateTimePicker"
+                value={value}
+                onChange={(newValue) => {
+                  setValue(newValue);
+                }}
+              />
+              </LocalizationProvider>*/}
             <Button variant="primary" type="submit" className="mt-2">
               Book!
             </Button>

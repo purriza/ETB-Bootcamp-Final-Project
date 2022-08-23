@@ -27,12 +27,16 @@ const ServiceList = ({ blockchain }) => {
           <Col md={12} className="mb-3" key={service.id}>
             <Card>
               <Card.Body>
-                <Card.Title>{service.name}</Card.Title>
-                <Card.Text>{service.description}</Card.Text>
-                <Card.Text>{service.price.toString()}</Card.Text>
-                <Card.Text>{service.duration.toString()}</Card.Text>
-                <Card.Text>{service.productIds}</Card.Text>
-                <Link 
+                <Card.Title>Name: {service.name}</Card.Title>
+                <Card.Text>Description: {service.description}</Card.Text>
+                <Card.Text>Price: {service.price.toString()}€</Card.Text>
+                <Card.Text>Duration: {(service.duration/60).toString()} minutes</Card.Text>
+                <Card.Text>Products: 
+                   {service.productNames.map((product) => (
+                    " " + product.toString()
+                  ))}
+                  </Card.Text>
+                {/*<Link 
                   to={`/service/${service.id}`}
                   state={{
                     service: {
@@ -41,7 +45,7 @@ const ServiceList = ({ blockchain }) => {
                   }}
                 >
                   <Button variant="primary">View</Button>
-                </Link>
+                </Link>*/}
               </Card.Body>
             </Card>
           </Col>
