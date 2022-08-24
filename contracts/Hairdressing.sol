@@ -199,9 +199,9 @@ contract Hairdressing {
     /// Bookings
 
     /// @notice Creates a new booking.
+    /// @param service — service id from the service to be booked.
     /// @param _date — date of the service.
-    /// @param _serviceId — service id from the service to be booked.
-    function createBooking(uint _date, uint _serviceId) external serviceExists(_serviceId) {
+    function createBooking(/*uint _serviceId*/uint _date, MultiSelectStruct[] memory service) external serviceExists(service[0].value) {
         // Check date? Not needed if we set the dates that appear on the app TO-DO
         /*require(
             _duration >= 5 minutes && _duration <= 2 hours,
@@ -211,8 +211,10 @@ contract Hairdressing {
         bookings[nextBookingId] = Booking(
             nextBookingId,
             _date, 
-            _serviceId,
-            services[_serviceId].name,
+            //_serviceId,
+            service[0].value,
+            //services[_serviceId].name,
+            service[0].label,
             msg.sender
         );
 

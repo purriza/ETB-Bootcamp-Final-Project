@@ -35,8 +35,9 @@ function Header ({ blockchain }) {
 
   // Booking form fields
   const [services, setServices] = useState([]);
-  const [selectedService, setSelectedService] = useState("");
+  const [selectedService, setSelectedService] = useState([]);
   const [date, setDate] = useState("");
+  const [selectedDate, setSelectedDate] = React.useState(null);
 
   useEffect(() => {
     (async () => {
@@ -103,9 +104,13 @@ function Header ({ blockchain }) {
   const onSubmitBooking = async (e) => {
     e.preventDefault();
     try {
+      // We have to transform JavaScript date to unix timestamp (number of seconds since 1970)
+      // First get the miliseconds and then divide it to get the seconds
+      const dateInSeconds = Math.floor(selectedDate.getTime() / 1000);
+
       await blockchain.hairdressing.createBooking(
-        selectedService.value,
-        date // TO-DO
+        dateInSeconds,
+        selectedService
       );
     } catch (error) {
       showError(error);
@@ -258,38 +263,37 @@ function Header ({ blockchain }) {
           <Modal.Title>Add New Booking</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={(e) => onSubmitProduct(e)}>
+          <form onSubmit={(e) => onSubmitBooking(e)}>
             <Form.Group className="mb-2" controlId="service">
               <Form.Label>Service</Form.Label>
               <Select
+                isMulti
                 name="services"
                 options={services}
-                className="basic-select"
+                className="basic-single"
                 placeholder="Enter service"
                 onChange={setSelectedService}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-2" controlId="date">
-              <Form.Label>Date</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                required
-              />
-            </Form.Group>
-            {/*<LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Form.Label>Date</Form.Label>
+            <br></br>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DateTimePicker
                 renderInput={(props) => <TextField {...props} />}
-                label="DateTimePicker"
-                value={value}
-                onChange={(newValue) => {
-                  setValue(newValue);
+                value={selectedDate}
+                ampm="true"
+                ampmInClock="false"
+                disablePast="true"
+                minTime={new Date(0, 0, 0, 9)}
+                maxTime={new Date(0, 0, 0, 18)}
+                onChange={(newDate) => {
+                  setSelectedDate(newDate);
                 }}
               />
-              </LocalizationProvider>*/}
+              </LocalizationProvider>
+            </Form.Group>
             <Button variant="primary" type="submit" className="mt-2">
               Book!
             </Button>
