@@ -24,11 +24,13 @@ function Header ({ blockchain }) {
   const [productDescription, setProductDescription] = useState("");
   const [productPrice, setProductPrice] = useState(0);
   const [durability, setDurability] = useState(0);
+  const [quantity, setQuantity] = useState(0);
 
   // Service form fields
   const [serviceName, setServiceName] = useState("");
   const [serviceDescription, setServiceDescription] = useState("");
   const [servicePrice, setServicePrice] = useState(0);
+  const [discount, setDiscount] = useState(0);
   const [duration, setDuration] = useState(0);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [products, setProducts] = useState([]);
@@ -77,7 +79,8 @@ function Header ({ blockchain }) {
         productName,
         productDescription,
         productPrice,
-        durability
+        durability,
+        quantity
       );
     } catch (error) {
       showError(error);
@@ -92,6 +95,7 @@ function Header ({ blockchain }) {
         serviceName,
         serviceDescription,
         servicePrice,
+        discount,
         duration*60,
         selectedProducts
       );
@@ -110,7 +114,8 @@ function Header ({ blockchain }) {
 
       await blockchain.hairdressing.createBooking(
         dateInSeconds,
-        selectedService
+        selectedService, 
+        { value: selectedService[0].price }
       );
     } catch (error) {
       showError(error);
@@ -186,6 +191,16 @@ function Header ({ blockchain }) {
                 required
               />
             </Form.Group>
+            <Form.Group className="mb-2" controlId="quantity">
+              <Form.Label>Quantity</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter quantity"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                required
+              />
+            </Form.Group>
             <Button variant="primary" type="submit" className="mt-2">
               Add
             </Button>
@@ -226,6 +241,16 @@ function Header ({ blockchain }) {
                 placeholder="Enter price"
                 value={servicePrice}
                 onChange={(e) => setServicePrice(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-2" controlId="discount">
+              <Form.Label>Discount</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter discount"
+                value={discount}
+                onChange={(e) => setDiscount(e.target.value)}
                 required
               />
             </Form.Group>

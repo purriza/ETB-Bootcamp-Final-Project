@@ -36,6 +36,28 @@ const BookingList = ({ blockchain }) => {
     return date;
   }
 
+  const complete = async (bookingId) => {
+    //e.preventDefault();
+    try {
+      await blockchain.hairdressing.completeBooking(
+        bookingId
+      );
+    } catch (error) {
+      showError(error);
+    }
+  };
+
+  const cancel = async (bookingId) => {
+    //e.preventDefault();
+    try {
+      await blockchain.hairdressing.cancelBooking(
+        bookingId
+      );
+    } catch (error) {
+      showError(error);
+    }
+  };
+
   return (
     <Container>
       <Row className="my-5">
@@ -47,7 +69,6 @@ const BookingList = ({ blockchain }) => {
             <Card>
               <Card.Body>
                 <Card.Title>{booking.serviceName.toString()}</Card.Title>
-                <Card.Text>{getDateFromUnix(booking.date).toString()}</Card.Text>
                 <br></br>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DateTimePicker
@@ -57,8 +78,15 @@ const BookingList = ({ blockchain }) => {
                   />
                 </LocalizationProvider>
                 <br></br>
-                <Card.Text>{booking.serviceName}</Card.Text>
+                <br></br>
                 <Card.Text>{booking.client}</Card.Text>
+                <Card.Text>{booking.state === 0 ? "PENDING" : booking.state === 1 ? "COMPLETED" : "CANCELED"}</Card.Text>
+                <Button className="mr-8" variant="secondary float-end" onClick={() => cancel(booking.id.toString())}>
+                  Cancel
+                </Button>
+                <Button variant="primary float-end" onClick={() => complete(booking.id.toString())}>
+                  Complete
+                </Button>
                 {/*<Link 
                   to={`/booking/${booking.id}`}
                   state={{

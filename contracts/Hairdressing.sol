@@ -8,12 +8,11 @@ contract Hairdressing {
     // 1. Allow admins to create services.
     // 2. Allow clients to book services.
     // 3. Allow admins to manage the product supply.
-    // 4. Getter functions for the frontend.
+    // 4. Allow admins/clients to complete/cancel a booking.
+    // 5. Getter functions for the frontend.
 
     /// =============== Variables ===============
     address public admin;
-    // TO-DO Gestion de hora de apertura/cierre (por dia?)
-    // TO-DO Gestion de horas disponibles por dia
 
     /// ============ Mutable storage ============
 
@@ -23,6 +22,7 @@ contract Hairdressing {
         string name;
         string description;
         uint price;
+        uint earlyDiscount;
         uint duration;
         uint[] productIds;
         string[] productNames;
@@ -41,6 +41,7 @@ contract Hairdressing {
         string description;
         uint price;
         uint durability;
+        uint quantity;
     }
     /// @notice List of all Products
     mapping(uint => Product) public products;
@@ -49,6 +50,12 @@ contract Hairdressing {
     /// @notice Id of the next product
     uint private nextProductId = 1;
 
+/// @notice Booking State enum
+    enum State {
+        PENDING,
+        COMPLETED,
+        CANCELED
+    }
     /// @notice Booking struct
     struct Booking {
         uint id;
@@ -56,6 +63,7 @@ contract Hairdressing {
         uint serviceId;
         string serviceName;
         address client;
+        State state;
     }
     /// @notice List of all Bookings
     mapping(uint => Booking) public bookings;
@@ -63,13 +71,17 @@ contract Hairdressing {
     uint[] public bookingList; 
     /// @notice Id of the next booking
     uint private nextBookingId = 1;
+    /// @notice List of all Bookings with their validators (0 == Not validated / 1 == Validated)
+    mapping(uint => mapping(address => uint)) bookingValidators;
 
     /// @notice Mapping of clientes and their booked services
     mapping(address => uint[]) private userBookings;
 
+    /// @notice MultiSelectStruct struct
     struct MultiSelectStruct {
         uint value;
         string label;
+        uint price;
     }
 
     /// =========== Constructor ===========
@@ -96,7 +108,7 @@ contract Hairdressing {
         _;
     }
 
-    /// @notice Ensure service exists
+    /// @notice Ensure product exists
     modifier productExists(uint _productId) {
         // Check if productId is valid
         require(
@@ -124,13 +136,15 @@ contract Hairdressing {
     /// @param _description — service description.
     /// @param _price — price of the product.
     /// @param _durability — the durability in uses.
-    function createProduct(string calldata _name, string calldata _description, uint _price, uint _durability) external onlyAdmin() {
+    /// @param _quantity — the quantity.
+    function createProduct(string calldata _name, string calldata _description, uint _price, uint _durability, uint _quantity) external onlyAdmin() {
         products[nextProductId] = Product(
             nextProductId,
             _name,
             _description,
             _price,
-            _durability
+            _durability,
+            _quantity
         );
 
         // Save the productsId 
@@ -144,7 +158,7 @@ contract Hairdressing {
     /// @notice Deletes an existing product.
     /// @param _productId — product id from the product to be deleted.
     function deleteProduct(uint _productId) external onlyAdmin() productExists(_productId) {
-        // Comprobar que no pertenece a ningún Servicio
+        // Check that it doesnt belong to any service
     }
 
     /// Services
@@ -153,9 +167,10 @@ contract Hairdressing {
     /// @param _name — name of the service.
     /// @param _description — service description.
     /// @param _price — price of the service.
+    /// @param _earlyDiscount — discount of the service if pre-paid.
     /// @param _duration — the duration, in seconds, for which the auction will accept offers.
     /// @param _products — array of the products needed for the service.
-    function createService(string calldata _name, string calldata _description, uint _price, uint _duration, MultiSelectStruct[] memory _products) external onlyAdmin() {
+    function createService(string calldata _name, string calldata _description, uint _price, uint _earlyDiscount, uint _duration, MultiSelectStruct[] memory _products) external onlyAdmin() {
         // Duration should be between 5 minutes and 2 hours
         require(
             _duration >= 5 minutes && _duration <= 2 hours,
@@ -174,6 +189,7 @@ contract Hairdressing {
             _name,
             _description,
             _price,
+            _earlyDiscount,
             _duration,
             productIds,
             productNames
@@ -193,7 +209,7 @@ contract Hairdressing {
     /// @notice Deletes an existing service.
     /// @param _serviceId — service id from the service to be deleted.
     function deleteService(uint _serviceId) external onlyAdmin() serviceExists(_serviceId) {
-        // Comprobar que no hay ninguna reserva de este Servicio
+        // Check that it doesnt belong to any booking
     }
 
     /// Bookings
@@ -201,38 +217,101 @@ contract Hairdressing {
     /// @notice Creates a new booking.
     /// @param service — service id from the service to be booked.
     /// @param _date — date of the service.
-    function createBooking(/*uint _serviceId*/uint _date, MultiSelectStruct[] memory service) external serviceExists(service[0].value) {
-        // Check date? Not needed if we set the dates that appear on the app TO-DO
-        /*require(
-            _duration >= 5 minutes && _duration <= 2 hours,
-            "Duration should be between 5 minutes and 2 hours"
-        );*/
+    function createBooking(uint _date, MultiSelectStruct[] memory service) 
+        external 
+        payable 
+            serviceExists(service[0].value) {
+            bookings[nextBookingId] = Booking(
+                nextBookingId,
+                _date, 
+                service[0].value,
+                service[0].label,
+                msg.sender,
+                State.PENDING
+            );
 
-        bookings[nextBookingId] = Booking(
-            nextBookingId,
-            _date, 
-            //_serviceId,
-            service[0].value,
-            //services[_serviceId].name,
-            service[0].label,
-            msg.sender
-        );
+            // Save the booking to client bookings mapping
+            userBookings[msg.sender].push(nextBookingId);
 
-        // Save the booking to client bookings mapping
-        userBookings[msg.sender].push(nextBookingId);
+            // Save the bookingId 
+            bookingList.push(nextBookingId);
 
-        // Save the bookingId 
-        bookingList.push(nextBookingId);
+            // Save the booking validators
+            bookingValidators[nextBookingId][admin] = 0;
+            bookingValidators[nextBookingId][msg.sender] = 0;
 
-        // Increment the booking counter
-        nextBookingId++;
+            // Increment the booking counter
+            nextBookingId++;
     }
 
-    // TO-DO
-    /// @notice Deletes an existing booking.
+    /// @notice Cancels an existing booking.
     /// @param _bookingId — product id from the product to be deleted.
-    function deleteBooking(uint _bookingId) external bookingExists(_bookingId) {
-       
+    function cancelBooking(uint _bookingId) external bookingExists(_bookingId) {
+        // Check if the sender is the client or the owner
+        require(
+            msg.sender == admin || msg.sender == bookings[_bookingId].client,
+            "You can not cancel this booking"
+        );
+
+        // Check if the booking is completed or canceled
+        require(
+            bookings[_bookingId].state == State.PENDING, 
+            "The booking is already completed or canceled"
+        );
+
+        // Check if the client is on time to cancel the booking
+        /*require(
+            bookings[_bookingId].date == State.PENDING, 
+            "The booking can not be canceled"
+        );*/
+
+        // Refund the service price to the client
+        uint serviceId = bookings[_bookingId].serviceId;
+        payable(bookings[_bookingId].client).transfer(services[serviceId].price);
+
+        // Set the CANCELED state
+        bookings[_bookingId].state = State.CANCELED;
+    }
+
+    /// @notice Completes an existing booking.
+    /// @param _bookingId — product id from the product to be deleted.
+    function completeBooking(uint _bookingId) external bookingExists(_bookingId) {
+        // Check if the sender is the client or the owner
+        require(
+            msg.sender == admin || msg.sender == bookings[_bookingId].client,
+            "You can not validate this booking"
+        );
+
+        // Check if the booking is completed or canceled
+        require(
+            bookings[_bookingId].state == State.PENDING, 
+            "The booking is already completed or canceled"
+        );
+
+        // Check if the sender (client or owner) has already validate the end of the booking
+        require(
+            bookingValidators[_bookingId][msg.sender] == 0,
+            "You have already validated this booking"
+        );
+
+        // Validate the booking from the msg.sender
+        bookingValidators[_bookingId][msg.sender] = 1;
+
+        // Check if the admin and the client have validated the booking
+        if (bookingValidators[_bookingId][admin] == 1 && bookingValidators[_bookingId][bookings[_bookingId].client] == 1) {
+            // Send the service discount to the client
+            uint serviceId = bookings[_bookingId].serviceId;
+            uint discount = (services[serviceId].price * services[serviceId].earlyDiscount) / 100;
+            
+            payable(bookings[_bookingId].client).transfer(discount);
+
+            // Set the COMPLETE state
+            bookings[_bookingId].state = State.COMPLETED;
+        }
+        else {
+            // Either the admin or the client havent validated the booking yet
+
+        }
     }
 
     /// ============ Getter Functions ============
@@ -272,13 +351,14 @@ contract Hairdressing {
         for (uint i = 1; i < nextServiceId; i++) {
             _allServices[i - 1].value = services[i].id;
             _allServices[i - 1].label = services[i].name;
+            _allServices[i - 1].price = services[i].price;
         }
 
         return _allServices;
     }
 
     /// @notice - List of all the products
-    function getProducts() external view returns (Product[] memory) {
+    function getProducts() external onlyAdmin() view returns (Product[] memory) {
         Product[] memory _allProducts = new Product[](nextProductId - 1);
 
         for (uint i = 1; i < nextProductId; i++) {
@@ -308,6 +388,7 @@ contract Hairdressing {
         for (uint i = 1; i < nextProductId; i++) {
             _allProducts[i - 1].value = products[i].id;
             _allProducts[i - 1].label = products[i].name;
+            _allProducts[i - 1].price = products[i].price;
         }
 
         return _allProducts;
@@ -315,10 +396,26 @@ contract Hairdressing {
 
     /// @notice - List of all the bookings
     function getBookings() external view returns (Booking[] memory) {
-        Booking[] memory _allBookings = new Booking[](nextBookingId - 1);
+        // If msg.sender is not the admin we send his bookings
+        if (msg.sender != admin) {
+            uint[] storage userBookingIds = userBookings[msg.sender];
+            Booking[] memory _bookings = new Booking[](userBookingIds.length);
 
-        for (uint i = 1; i < nextBookingId; i++) {
-            _allBookings[i - 1] = bookings[i];
+            for (uint i = 0; i < userBookingIds.length; i++) {
+                uint bookingId = userBookingIds[i];
+                _bookings[i] = bookings[bookingId];
+            }
+
+            return _bookings;
+        }
+        else {
+            Booking[] memory _allBookings = new Booking[](nextBookingId - 1);
+
+            for (uint i = 1; i < nextBookingId; i++) {
+                _allBookings[i - 1] = bookings[i];
+            }
+
+            return _allBookings;
         }
 
         // TO-DO Better?
@@ -332,7 +429,7 @@ contract Hairdressing {
             );
         }*/
 
-        return _allBookings;
+        //return _allBookings;
     }
 
     /// @notice - List of bookings for a client

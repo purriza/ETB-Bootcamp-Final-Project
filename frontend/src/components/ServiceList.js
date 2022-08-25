@@ -29,8 +29,8 @@ const ServiceList = ({ blockchain }) => {
               <Card.Body>
                 <Card.Title>Name: {service.name}</Card.Title>
                 <Card.Text>Description: {service.description}</Card.Text>
-                <Card.Text>ID: {service.id.toString()}</Card.Text>
-                <Card.Text>Price: {service.price.toString()}€</Card.Text>
+                <Card.Text>Price: {service.price.toString()}</Card.Text>
+                <Card.Text>Discount: {service.earlyDiscount.toString()}%</Card.Text>
                 <Card.Text>Duration: {(service.duration/60).toString()} minutes</Card.Text>
                 <Card.Text>Products: 
                    {service.productNames.map((product) => (

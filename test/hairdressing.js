@@ -8,24 +8,28 @@ describe("Hairdressing Contract", () => {
     description: "Hairdressing product1",
     price: 10,
     durability: 5,
+    quantity: 10
   };
   const PRODUCT2 = {
     name: "product2",
     description: "Hairdressing product2",
     price: 15,
     durability: 3,
+    quantity: 5
   };
   // Sample Service
   const SERVICE = {
     name: "service1",
     description: "Hairdressing service1",
     price: 20,
+    earlyDiscount: 10,
     duration: 300, // 5 minutes
-    products: [{value: 1, label: "Product 1"}, {value: 2, label: "Product 2"}]
+    products: [{value: 1, label: "Product 1", price: 5}, {value: 2, label: "Product 2", price: 5}]
   };
   // Sample Booking
   const BOOKING = {
-    serviceId: 1
+    service: [{value: 1, label: "Service 1", price: 5}],
+    service2: [{value: 2, label: "Service 2", price: 5}]
   };
 
   // Contract object
@@ -50,7 +54,8 @@ describe("Hairdressing Contract", () => {
         PRODUCT1.name,
         PRODUCT1.description,
         PRODUCT1.price,
-        PRODUCT1.durability
+        PRODUCT1.durability,
+        PRODUCT1.quantity
       );
 
       const timeStamp = (await ethers.provider.getBlock(productTx.blockNumber))
@@ -65,6 +70,7 @@ describe("Hairdressing Contract", () => {
       expect(products[0].description).to.be.equal(PRODUCT1.description);
       expect(products[0].price).to.be.equal(PRODUCT1.price);
       expect(products[0].durability).to.be.equal(PRODUCT1.durability);
+      expect(products[0].quantity).to.be.equal(PRODUCT1.quantity);
       //expect(products[0].auctionEnd).to.be.equal(timeStamp + AUCTION.duration);
     });
 
@@ -74,7 +80,8 @@ describe("Hairdressing Contract", () => {
           PRODUCT1.name,
           PRODUCT1.description,
           PRODUCT1.price,
-          PRODUCT1.durability
+          PRODUCT1.durability,
+          PRODUCT1.quantity
         )
       ).to.be.revertedWith("Only admin");
     });
@@ -87,6 +94,7 @@ describe("Hairdressing Contract", () => {
         SERVICE.name,
         SERVICE.description,
         SERVICE.price,
+        SERVICE.earlyDiscount,
         SERVICE.duration,
         SERVICE.products
       );
@@ -97,6 +105,7 @@ describe("Hairdressing Contract", () => {
       expect(services[0].name).to.be.equal(SERVICE.name);
       expect(services[0].description).to.be.equal(SERVICE.description);
       expect(services[0].price).to.be.equal(SERVICE.price);
+      expect(services[0].discount).to.be.equal(SERVICE.discount);
       expect(services[0].duration).to.be.equal(SERVICE.duration);
       //expect(services[0].productsId.length).to.be.equal(2);
       expect(services[0].productIds[0]).to.be.equal(SERVICE.products[0].value);
@@ -111,6 +120,7 @@ describe("Hairdressing Contract", () => {
           SERVICE.name,
           SERVICE.description,
           SERVICE.price,
+          SERVICE.earlyDiscount,
           SERVICE.duration,
           SERVICE.products
         )
@@ -123,6 +133,7 @@ describe("Hairdressing Contract", () => {
           SERVICE.name,
           SERVICE.description,
           SERVICE.price,
+          SERVICE.earlyDiscount,
           240, // 4 minutes 
           SERVICE.products
         )
@@ -136,6 +147,7 @@ describe("Hairdressing Contract", () => {
         SERVICE.name,
         SERVICE.description,
         SERVICE.price,
+        SERVICE.earlyDiscount,
         SERVICE.duration,
         SERVICE.products
       );
@@ -146,6 +158,7 @@ describe("Hairdressing Contract", () => {
         SERVICE.name,
         SERVICE.description,
         SERVICE.price,
+        SERVICE.earlyDiscount,
         SERVICE.duration,
         SERVICE.products
       );
@@ -155,7 +168,7 @@ describe("Hairdressing Contract", () => {
 
       await HairdressingContract.connect(client1).createBooking(
           timeStamp,
-          1
+          BOOKING.service
       );
 
       const bookings = await HairdressingContract.getBookings();
@@ -177,64 +190,11 @@ describe("Hairdressing Contract", () => {
       await expect(
         HairdressingContract.connect(client1).createBooking(
           1638352800,
-          2
+          BOOKING.service2
         )
       ).to.be.revertedWith("Service does not exist");
     });
 
   });
-
-  /*describe("Trade", () => {
-    beforeEach(async () => {
-      // Create a new auction
-      await EbayContract.createAuction(
-        AUCTION.name,
-        AUCTION.description,
-        AUCTION.min,
-        AUCTION.duration
-      );
-    });
-    it("Should trade", async () => {
-      const bestPrice = AUCTION.min + 10;
-
-      // PUI: In order to check if the buyer1 (who didnt won the auction) has received his money back
-      const balanceBeforeOfferBuyer1 = await ethers.provider.getBalance(buyer1.address);
-      const balanceBeforeOfferBuyer2 = await ethers.provider.getBalance(buyer2.address);
-
-      await EbayContract.connect(buyer1).createOffer(1, {
-        value: AUCTION.min,
-      });
-      await EbayContract.connect(buyer2).createOffer(1, {
-        value: bestPrice,
-      });
-
-      const balanceBefore = await ethers.provider.getBalance(seller.address);
-
-      //  Increase time to 10 seconds after duration
-      await network.provider.send("evm_increaseTime", [AUCTION.duration + 10]);
-      await network.provider.send("evm_mine");
-
-      //dont want to deduct gas fee from buyer account for easy balance comparison
-      //so I send tx from a random address
-      await EbayContract.connect(random).trade(1);
-      const balanceAfter = await ethers.provider.getBalance(seller.address);
-      await expect(balanceAfter.sub(balanceBefore).toNumber()).equal(bestPrice);
-
-      // PUI: Check if buyer1 has received his money back TO-DO
-      const balanceAfterOfferBuyer1 = await ethers.provider.getBalance(buyer1.address);
-      const balanceAfterOfferBuyer2 = await ethers.provider.getBalance(buyer2.address);
-      console.log("Buyer's 1 balance after offer:", ethers.utils.formatEther(balanceAfterOfferBuyer1.toString()));
-      console.log("Buyer's 2 balance after offer:", ethers.utils.formatEther(balanceAfterOfferBuyer2.toString()));
-
-      //await expect(balanceBeforeOfferBuyer1).to.equal(balanceAfterOfferBuyer1);
-      //await expect(balanceBeforeOfferBuyer2).to.equal(balanceAfterOfferBuyer2);
-    });
-
-    it("should NOT trade if auction does not exist", async () => {
-      await expect(EbayContract.trade(2)).to.be.revertedWith(
-        "Auction does not exist"
-      );
-    });
-  });*/
 
 });

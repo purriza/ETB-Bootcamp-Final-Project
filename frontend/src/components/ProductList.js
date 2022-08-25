@@ -29,8 +29,9 @@ const ProductList = ({ blockchain }) => {
               <Card.Body>
                 <Card.Title>Name: {product.name}</Card.Title>
                 <Card.Text>Description: {product.description}</Card.Text>
-                <Card.Text>Price: {product.price.toString()}€</Card.Text>
+                <Card.Text>Price: {product.price.toString()}</Card.Text>
                 <Card.Text>Durability: {product.durability.toString()} uses</Card.Text>
+                <Card.Text>Quantity: {product.quantity.toString()} </Card.Text>
                 {/*<Link 
                   to={`/product/${product.id}`}
                   state={{
